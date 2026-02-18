@@ -1,5 +1,5 @@
 ---
-title: "Example Manuscript Template for a Data Analysis Project"
+title: "Statistical Analysis of Peanut Variety Performance in a State Variety Testing Program"
 author: ""
 format:
   docx:
@@ -10,11 +10,6 @@ bibliography: ../../assets/dataanalysis-references.bib
 csl: ../../assets/american-journal-of-epidemiology.csl
 ---
 
-The structure below is one possible setup for a manuscript stemming from a data analysis project. It loosely follows the structure of a standard scientific manuscript. Adjust as needed. You don't need to have exactly these sections, but the content covering those sections should be addressed.
-
-This uses [MS Word as output format](https://quarto.org/docs/output-formats/ms-word.html). See [the Quarto documentation](https://quarto.org/) for instructions on how to use other formats.
-
-
 ```{r, echo=FALSE, message=FALSE}
 # load a few R packages
 library(here)
@@ -24,23 +19,16 @@ library(knitr)
 
 **Authors**  
 
-* First Author$^{1,2,*}$ (ORCID: 0000-0000-1234-5678) 
-* Second Author$^{3, *}$
-* Third Author$^{3, \dagger}$
-* Last Author$^{1, 2, \land}$ 
+* Santiago Emil A. Joson IV$^{1}$ 
+
 
 **Author affiliations**  
 
-1. College of Public Health, University of Georgia, Athens, GA, USA.
-2. Another Affiliation, Athens, GA, USA.
-3. Yet another Affiliation.
+1. Department of Plant Pathology, University of Georgia, Griffin, GA, USA.
 
-$*$ These authors contributed equally to this work.
 
-$\land$ Corresponding author: some@email.com
 
-$\dagger$ Disclaimer: The opinions expressed in this article are the
-author's own and don't reflect their employer.
+
 
 
 {{< pagebreak >}}
@@ -58,17 +46,18 @@ _It is recommended to use a structured abstract with Background/Methods/Results/
 # Introduction 
 
 ## General Background Information
-_Provide enough background on your topic that others can understand the why and how of your analysis_ 
+Peanut variety testing programs are conducted to evaluate the performance of different cultivars under regional growing conditions. These trials provide valuable information to growers, breeders, and agricultural researchers by comparing yield potential, disease resistance, and other agronomic traits. Understanding variation among peanut varieties can inform cultivar selection and management decisions that improve productivity and profitability.
+
+The objective of this analysis was to examine a dataset obtained from a state peanut variety testing facility and identify patterns, trends, or statistically significant differences among peanut varieties. Specifically, this report aims to evaluate how selected variables (such as yield, grade, or disease ratings — adjust once known) vary across cultivars and determine whether meaningful differences exist.
 
 ## Description of data and data source
-_Describe what the data is, what it contains, where it is from, etc. Eventually this might be part of a methods section._
+The dataset was obtained from the Georgia State Variety Testing program. The dataset has 18,117 rows and 38 columns of different observations (e.g., year, location, variety, yield, planting date, plot, irrigation, etc.)
 
 ## Questions/Hypotheses to be addressed
-_State the research questions you plan to answer with this analysis._
-
-To cite other work (important everywhere, but likely happens first in introduction), make sure your references are in the BibTeX file specified in the YAML header above and have the right BibTeX key. Then you can include like this:
-
-Examples of reproducible research projects can for instance be found in [@mckay2020; @mckay2020a].
+With the scope of this dataset, I will try to answer the following questions:
+  1. Do peanut varieties differ significantly in yield?
+  2. Does location significantly affect yield?
+  3. What variables significantly influence yield? 
 
 
 

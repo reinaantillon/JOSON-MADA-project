@@ -48,15 +48,19 @@ _It is recommended to use a structured abstract with Background/Methods/Results/
 ## General Background Information
 Peanut variety testing programs are conducted to evaluate the performance of different cultivars under regional growing conditions. These trials provide valuable information to growers, breeders, and agricultural researchers by comparing yield potential, disease resistance, and other agronomic traits. Understanding variation among peanut varieties can inform cultivar selection and management decisions that improve productivity and profitability.
 
-The objective of this analysis was to examine a dataset obtained from a state peanut variety testing facility and identify patterns, trends, or statistically significant differences among peanut varieties. Specifically, this report aims to evaluate how selected variables (such as yield, grade, or disease ratings — adjust once known) vary across cultivars and determine whether meaningful differences exist.
+The objective of this analysis was to examine a dataset obtained from a state peanut variety testing facility and identify patterns, trends, or statistically significant differences among peanut varieties. Specifically, this report aims to evaluate how selected variables (such as irrigation, location, yield) vary across cultivars and determine whether meaningful differences exist.
 
 ## Description of data and data source
-The dataset was obtained from the Georgia State Variety Testing program. The dataset has 18,117 rows and 38 columns of different observations (e.g., year, location, variety, yield, planting date, plot, irrigation, etc.)
+The dataset was obtained from the Georgia State Variety Testing program. The dataset has 18,117 rows and 38 columns of different observations:
+  1. 
 
 ## Questions/Hypotheses to be addressed
 With the scope of this dataset, I will try to answer the following questions:
+
   1. Do peanut varieties differ significantly in yield?
+
   2. Does location significantly affect yield?
+
   3. What variables significantly influence yield? 
 
 
@@ -91,6 +95,67 @@ _As applicable, explain where and how you got the data. If you directly import t
 ## Data import and cleaning
 _Write code that reads in the file and cleans it so it's ready for analysis. Since this will be fairly long code for most datasets, it might be a good idea to have it in one or several R scripts. If that is the case, explain here briefly what kind of cleaning/processing you do, and provide more details and well documented code somewhere (e.g. as supplement in a paper). All materials, including files that contain code, should be commented well so everyone can follow along._
 
+```{r setup, warning=FALSE, message=FALSE}
+library(here)
+library(dplyr)
+library(stringr)
+library(skimr)
+library(readr)
+library(ggplot2)
+
+#set data path
+data_path <- here("data","raw-data","peanuts.csv")
+
+#load data
+data <- read.csv2(here(data_path), sep = ",")
+
+#preliminary inspection
+dim(data)
+names(data)
+glimpse(data)
+head(data, 10)
+colSums(is.na(data))
+
+```
+
+From preliminary inspections, the dataset contains missing data in the form of whitespace and -9. Additionally, columns that should be considered numeric (e.g., total_seed_weight, seed_per_pound, etc.) are classified as characters. 
+
+```{r}
+#clean up
+num_cols <- c("plot_weight","total_seed_weight","calc_seed_weight_200",
+              "seed_weight_200","seed_weight_100","seed_per_pound")
+data <- data %>%
+  mutate(across(all_of(num_cols), parse_number)) #convert "num stored as chr" columns into numeric
+
+data <- data %>%
+  # optional but helpful: trim whitespace so "   " becomes ""
+  mutate(across(where(is.character), str_squish)) %>%
+  # turn empty strings into NA
+  mutate(across(where(is.character), ~ na_if(.x, ""))) %>%
+  # turn "-9" strings into NA (only affects character columns)
+  mutate(across(where(is.character), ~ na_if(.x, "-9"))) %>%
+  # turn -9 numeric sentinel into NA (only affects numeric/integer columns)
+  mutate(across(where(is.numeric), ~ na_if(.x, -9)))
+
+colSums(is.na(data))
+```
+
+Many variables in this dataset are mostly missing data. Given the number of variables present in this dataset, a subset of only the variables needed for this analysis will be produced.
+
+```{r}
+df <- data %>%
+  select(year, location, watered, variety, peanut_yield, market_type)
+
+df %>%
+  summarise(
+    n_variety = n_distinct(variety),
+    n_market_type = n_distinct(market_type),
+    n_location = n_distinct(location),
+    n_year = n_distinct(year)
+  )
+```
+
+The final dataset contains four (4) variables: variety, market_type, location, and year. This report will then analyze 140 varieties representing 6 marketypes across 4 locations and 13 years.
 
 ## Statistical analysis
 _Explain anything related to your statistical analyses._
@@ -105,6 +170,44 @@ _Explain anything related to your statistical analyses._
 
 _Use a combination of text/tables/figures to explore and describe your data. Show the most important descriptive results here. Additional ones should go in the supplement. Even more can be in the R and Quarto files that are part of your project._
 
+```{r}
+#checking the variables 
+table(df$variety)
+table(df$location)
+table(df$watered)
+hist(df$year)
+hist(df$peanut_yield)
+
+ggplot(df, aes(x = reorder(variety, peanut_yield, median, na.rm = TRUE),
+               y = peanut_yield)) +
+  geom_boxplot() +
+  theme_bw() +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1))
+
+ggplot(df, aes(x = watered, y = peanut_yield)) +
+  geom_boxplot() +
+  labs(x = "Watered", y = "Peanut Yield (lb/acre)") +
+  theme_bw()
+
+ggplot(df, aes(x = location, y = peanut_yield)) +
+  geom_boxplot(outlier.alpha = 0.2) +
+  labs(x = "Location", y = "Peanut Yield (lb/acre)") +
+  theme_bw()
+
+df %>%
+  group_by(year, location) %>%
+  summarise(mean_yield = mean(peanut_yield, na.rm = TRUE),
+            .groups = "drop") %>%
+  ggplot(aes(x = year, y = mean_yield)) +
+  geom_line() +
+  geom_point() +
+  facet_wrap(~ location) +
+  theme_bw()
+```
+
+```{r}
+
+```
 
 @tbl-summarytable shows a summary of the data.
 
@@ -124,6 +227,9 @@ knitr::kable(resulttable)
 
 _To get some further insight into your data, if reasonable you could compute simple statistics (e.g. simple models with 1 predictor) to look for associations between your outcome(s) and each individual predictor variable. Though note that unless you pre-specified the outcome and main exposure, any "p<0.05 means statistical significance" interpretation is not valid._
 
+```{r}
+
+```
 
 @fig-result shows a scatterplot figure produced by one of the R scripts.
 

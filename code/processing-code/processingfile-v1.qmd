@@ -25,6 +25,11 @@ library(dplyr) #for data processing/cleaning
 library(tidyr) #for data processing/cleaning
 library(skimr) #for nice visualization of data 
 library(here) #to set paths
+library(stringr) #for string processing
+library(readr) #for data processing
+library(ggplot2) #for visualization
+library(gt)
+
 ```
 
 
@@ -37,87 +42,90 @@ but it adds typing. You can do it either way.
 ```{r}
 # path to data
 # note the use of the here() package and not absolute paths
-data_location <- here::here("data","raw-data","exampledata.xlsx")
-rawdata <- readxl::read_excel(data_location)
+data_location <- here::here("data","raw-data","peanuts.csv")
+rawdata <- read.csv2(data_location1, sep=",")
 ```
 
-
-# Check data
-
-First we can look at the codebook
-
 ```{r}
-codebook <- readxl::read_excel(data_location, sheet ="Codebook")
-print(codebook)
+#names_rawdata1 <- names(rawdata1)
+#print(names_rawdata1)
+
+# save to file
+#rawdata_names_file = here("results", "tables", "rawdata_names.rds")
+#saveRDS(names_rawdata1, file = rawdata_names_file)
+
+var_names <- matrix(names(rawdata1), ncol = 2)
+# save to file
+rawdata_names_file = here("results", "tables", "rawdata_names.rds")
+saveRDS(var_names, file = rawdata_names_file)
+
 ```
 
-
-Several ways of looking at the data
-
 ```{r}
-dplyr::glimpse(rawdata)
-summary(rawdata)
-head(rawdata)
-skimr::skim(rawdata)
+#these are columns that should be numeric based on their names and data, but are currently classified as characters
+num_cols <- c("plot_weight","total_seed_weight","calc_seed_weight_200",
+              "seed_weight_200","seed_weight_100","seed_per_pound")
+
+#convert "num stored as chr" columns into numeric
+rawdata <- rawdata %>%
+  mutate(across(all_of(num_cols), parse_number)) 
+
+rawdata <- rawdata %>%
+  # optional but helpful: trim whitespace so "   " becomes ""
+  mutate(across(where(is.character), str_squish)) %>%
+  # turn empty strings into NA
+  mutate(across(where(is.character), ~ na_if(.x, ""))) %>%
+  # turn "-9" strings into NA (only affects character columns)
+  mutate(across(where(is.character), ~ na_if(.x, "-9"))) %>%
+  # turn -9 numeric sentinel into NA (only affects numeric/integer columns)
+  mutate(across(where(is.numeric), ~ na_if(.x, -9)))
+
+#check missing data
+colSums(is.na(rawdata))
+
+#subset only variables needed
+df <- rawdata %>%
+  select(year, location, watered, variety, peanut_yield)
+
+#making a key for the variety names to be kept confidential
+variety_key <- df %>%
+  distinct(variety) %>%              # get unique varieties
+  arrange(variety) %>%               # optional: keeps numbering consistent
+  mutate(variety_id = sprintf("%03d", row_number()))
+
+#converting variety names with variety numbers
+df <- df %>%
+  left_join(variety_key, by = "variety") %>%
+  select(-variety) %>%
+  rename(variety = variety_id)
+
+#only keeping entries that are present in all locations
+variety_locations <- df %>%
+  group_by(variety) %>%
+  summarise(n_locations = n_distinct(location))
+valid_varieties <- variety_locations %>%
+  filter(n_locations == 4) %>%
+  pull(variety)
+df <- df %>%
+  filter(variety %in% valid_varieties)
+
+#remove rows with missing yield
+df <- df %>% 
+  filter(!is.na(peanut_yield))
+
+#checking final dataframe
+df %>%
+  summarise(
+    n_variety = n_distinct(variety),
+    n_location = n_distinct(location),
+    n_year = n_distinct(year)
+  )
+
 ```
 
-
-
-# Cleaning
-
-By inspecting the data as done above, we find some problems that need addressing:
-
-First, there is an entry for height which says "sixty" instead of a number. 
-Does that mean it should be a numeric 60? It somehow doesn't make sense since the weight is 60kg, which can't happen for a 60cm person (a baby).
-Since we don't know how to fix this, we might decide to remove the person. This "sixty" entry also turned all Height entries into characters instead of numeric. That conversion to character also means that our summary function isn't very meaningful. So let's fix that first.
-
 ```{r}
-d1 <- rawdata %>% dplyr::filter( Height != "sixty" ) %>% 
-                  dplyr::mutate(Height = as.numeric(Height))
-skimr::skim(d1)
-hist(d1$Height)
-```
+processeddata <- df
 
-Now we see that there is one person with a height of 6. That could be a typo, or someone mistakenly entered their height in feet. We assume that we know it was a mistaken entry as feet and convert to centimeters. Depending on your knowledge of the data, you might instead want to remove this person.
-
-```{r}
-d2 <- d1 %>% dplyr::mutate( Height = replace(Height, Height=="6",round(6*30.48,0)) )
-skimr::skim(d2)
-```
-
-Height values seem ok now.
-
-Now let's look at the `Weight` variable. There is a person with weight of 7000, which is impossible, and one person with missing weight.
-To be able to analyze the data, we'll remove those individuals as well.
-
-```{r}
-d3 <- d2 %>%  dplyr::filter(Weight != 7000) %>% tidyr::drop_na()
-skimr::skim(d3)
-```
-
-Now checking the `Gender` variable. Gender should be a categorical/factor variable but is loaded as character. We can fix that with simple base R code to mix things up.
-
-```{r}
-d3$Gender <- as.factor(d3$Gender)  
-skimr::skim(d3)
-```
-
-
-Now we see that there is another NA, but it's not `NA` from R, instead it was loaded as character and is now considered as a category.
-We'll proceed here by removing that individual with that NA entry. Since this keeps an empty category for Gender, I'm also using droplevels() to get rid of it.
-
-```{r}
-d4 <- d3 %>% dplyr::filter( !(Gender %in% c("NA","N")) ) %>% droplevels()
-skimr::skim(d4)
-```
-
-
-All done, data is clean now. 
-
-Let's assign at the end to some final variable, this makes it easier to add further cleaning steps above.
-
-```{r}
-processeddata <- d4
 ```
 
 
@@ -133,6 +141,7 @@ http://www.sthda.com/english/wiki/saving-data-into-r-data-format-rds-and-rdata
 ```{r}
 save_data_location <- here::here("data","processed-data","processeddata.rds")
 saveRDS(processeddata, file = save_data_location)
+
 ```
 
 

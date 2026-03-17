@@ -24,10 +24,10 @@ Plots produced here can be scatterplots, boxplots, violinplots, etc. Tables can 
 #load needed packages. make sure they are installed.
 library(here) #for data loading/saving
 library(dplyr)
-library(skimr)
 library(ggplot2)
-```
+library(skimr)
 
+```
 
 Load the data.
 
@@ -35,73 +35,78 @@ Load the data.
 #Path to data. Note the use of the here() package and not absolute paths
 data_location <- here::here("data","processed-data","processeddata.rds")
 #load data
-mydata <- readRDS(data_location)
+df <- readRDS(data_location)
 ```
-
-
-
-
 
 # Data exploration through tables
 
-Showing a bit of code to produce and save a summary table.
-
-
 ```{r}
-summary_df = skimr::skim(mydata)
+summary_df <- df %>%
+  summarise(
+    n_variety = n_distinct(variety),
+    n_location = n_distinct(location),
+    n_year = n_distinct(year)
+  )
 print(summary_df)
+
 # save to file
 summarytable_file = here("results", "tables", "summarytable.rds")
 saveRDS(summary_df, file = summarytable_file)
 ```
 
-We are saving the results to the `results` folder. Depending on how many tables/figures you have, it might make sense to have separate folders for each. And/or you could have separate folders for exploratory tables/figures and for final tables/figures. Just choose a setup that makes sense for your project and works for you, and provide enough documentation that someone can understand what you are doing.
-
-
 # Data exploration through figures
 
-Histogram plots for the continuous outcomes. 
-
-Height first.
-
 ```{r}
-p1 <- mydata %>% ggplot(aes(x=Height)) + geom_histogram() 
+#checking the variables 
+table(df$variety)
+table(df$location)
+table(df$watered)
+hist(df$year)
+hist(df$peanut_yield)
+
+#plotting yield by varieties, in ascending order
+p1 <- ggplot(df, aes(x = reorder(variety, peanut_yield, median, na.rm = TRUE),
+               y = peanut_yield)) +
+  geom_boxplot() +
+  theme_bw() +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1))
+
 plot(p1)
-figure_file = here("results", "figures","height-distribution.png")
-ggsave(filename = figure_file, plot=p1) 
-```
+eda1 = here("results", "figures","eda1.png")
+ggsave(filename = eda1, plot=p1) 
 
-Now weights.
+#plotting yield by watered vs non-watered
+p2 <- ggplot(df, aes(x = watered, y = peanut_yield)) +
+  geom_boxplot() +
+  labs(x = "Watered", y = "Peanut Yield (lb/acre)") +
+  theme_bw()
 
-```{r}
-p2 <- mydata %>% ggplot(aes(x=Weight)) + geom_histogram() 
 plot(p2)
-figure_file = here("results", "figures","weight-distribution.png")
-ggsave(filename = figure_file, plot=p2) 
-```
+eda2 = here("results", "figures","eda2.png")
+ggsave(filename = eda2, plot=p2) 
 
-Now height as function of weight.
+#plotting yield by location
+p3 <- ggplot(df2, aes(x = location, y = peanut_yield)) +
+  geom_boxplot(outlier.alpha = 0.2) +
+  labs(x = "Location", y = "Peanut Yield (lb/acre)") +
+  theme_bw()
 
-```{r}
-p3 <- mydata %>% ggplot(aes(x=Height, y=Weight)) + geom_point() + geom_smooth(method='lm')
 plot(p3)
-figure_file = here("results", "figures", "height-weight.png")
-ggsave(filename = figure_file, plot=p3) 
-```
+eda3 = here("results", "figures","eda3.png")
+ggsave(filename = eda3, plot=p3) 
 
-Once more height as function of weight, stratified by gender. Note that there is so little data, it's a bit silly. But we'll plot it anyway.
+#plotting yield across years by location
+p4 <- df2 %>%
+  group_by(year, location) %>%
+  summarise(mean_yield = mean(peanut_yield, na.rm = TRUE),
+            .groups = "drop") %>%
+  ggplot(aes(x = year, y = mean_yield)) +
+  geom_line() +
+  geom_point() +
+  facet_wrap(~ location) +
+  theme_bw()
 
-```{r}
-p4 <- mydata %>% ggplot(aes(x=Height, y=Weight, color = Gender)) + geom_point() + geom_smooth(method='lm')
 plot(p4)
-figure_file = here("results", "figures", "height-weight-stratified.png")
-ggsave(filename = figure_file, plot=p4) 
+eda4 = here("results", "figures","eda4.png")
+ggsave(filename = eda4, plot=p4) 
 ```
-
-
-
-# Notes
-
-For your own explorations, tables and figures can be "quick and dirty". As long as you can see what's going on, there is no need to polish them. That's in contrast to figures you'll produce for your final products (paper, report, presentation, website, etc.). Those should look as nice, polished and easy to understand as possible.
-
-

@@ -22,35 +22,50 @@ mydata <- readRDS(data_location)
 ######################################
 
 ############################
-#### First model fit
-# fit linear model using height as outcome, weight as predictor
 
-lmfit1 <- lm(Height ~ Weight, mydata)  
+
+#### First model fit
+model_variety <- aov(peanut_yield ~ variety, data = df)
+summary(model_variety)
 
 # place results from fit into a data frame with the tidy function
-lmtable1 <- broom::tidy(lmfit1)
+model1 <- broom::tidy(model_variety)
 
 #look at fit results
-print(lmtable1)
+print(model1)
 
 # save fit results table  
 table_file1 = here("results", "tables", "resulttable1.rds")
-saveRDS(lmtable1, file = table_file1)
+saveRDS(model1, file = table_file1)
 
 ############################
 #### Second model fit
-# fit linear model using height as outcome, weight and gender as predictor
 
-lmfit2 <- lm(Height ~ Weight + Gender, mydata)  
+model_location <- aov(peanut_yield ~ location, data = df) 
+summary(model_location)
 
 # place results from fit into a data frame with the tidy function
-lmtable2 <- broom::tidy(lmfit2)
+model2 <- broom::tidy(model_location)
 
 #look at fit results
-print(lmtable2)
+print(model2)
 
 # save fit results table  
 table_file2 = here("results", "tables", "resulttable2.rds")
-saveRDS(lmtable2, file = table_file2)
+saveRDS(model2, file = table_file2)
 
+############################
+#### Third model fit
+model3 <- t.test(peanut_yield ~ watered, data = df)
+model3
+
+# place results from fit into a data frame with the tidy function
+model3 <- broom::tidy(model3)
+
+#look at fit results
+print(model3)
+
+# save fit results table  
+table_file3 = here("results", "tables", "resulttable3.rds")
+saveRDS(model3, file = table_file3)
   

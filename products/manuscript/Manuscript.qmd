@@ -6,8 +6,7 @@ format:
     toc: false
     number-sections: true
     highlight-style: github
-bibliography: ../../assets/dataanalysis-references.bib
-csl: ../../assets/american-journal-of-epidemiology.csl
+
 ---
 
 ```{r, echo=FALSE, message=FALSE}
@@ -80,18 +79,6 @@ With the scope of this dataset, I will try to answer the following questions:
 _Describe your methods. That should describe the data, the cleaning processes, and the analysis approaches. You might want to provide a shorter description here and all the details in the supplement._
 
 
-## Schematic of workflow
-
-Sometimes you might want to show a schematic diagram/figure that was not created with code (if you can do it with code, do it). @fig-schematic is an example of some - completely random/unrelated - schematic that was generated with BioRender.
-We store those figures in the `assets` folder.
-
-```{r}
-#| label: fig-schematic
-#| fig-cap: "A figure that is manually generated and shows some overview/schematic. This has nothing to do with the data, it's just a random one from one of our projects I found and placed here."
-#| echo: FALSE
-knitr::include_graphics(here("assets","antigen-recognition.png"))
-```
-
 
 
 
@@ -127,7 +114,7 @@ Peanut yield varied widely among the tested varieties (Figure 2). Median yield v
 #| label: fig-eda1
 #| fig-cap: "Yield by variety."
 #| echo: FALSE
-knitr::include_graphics(here("results","figures","eda1.png"))
+knitr::include_graphics(here("results","figures","eda_p1.png"))
 ```
 
 Peanut yield differed between irrigated and non-irrigated conditions (Figure 3). Irrigated plots (watered = TRUE) exhibited a higher median yield compared to non-irrigated plots (watered = FALSE). The distribution of yields under irrigation was also shifted upward, with a greater proportion of observations exceeding 5,000 lb/acre. Although variability was present in both groups, the overall pattern indicates that irrigation is associated with increased peanut yield.
@@ -135,7 +122,7 @@ Peanut yield differed between irrigated and non-irrigated conditions (Figure 3).
 #| label: fig-eda2
 #| fig-cap: "Yield by irrigation."
 #| echo: FALSE
-knitr::include_graphics(here("results","figures","eda2.png"))
+knitr::include_graphics(here("results","figures","eda_p2.png"))
 ```
 
 Yield varied across the four testing locations (Figure 4). Attapulgus exhibited the highest median yield, with values generally concentrated between 6,000 and 7,000 lb/acre. In contrast, Plains showed the lowest median yield and greater variability, with many observations below 5,000 lb/acre. Midville and Tifton displayed intermediate yield distributions, though Midville exhibited a wider spread, including both low and high yield observations. These differences highlight the influence of location on peanut yield performance.
@@ -143,7 +130,7 @@ Yield varied across the four testing locations (Figure 4). Attapulgus exhibited 
 #| label: fig-eda3
 #| fig-cap: "Yield by location."
 #| echo: FALSE
-knitr::include_graphics(here("results","figures","eda3.png"))
+knitr::include_graphics(here("results","figures","eda_p3.png"))
 ```
 
 Temporal patterns in yield varied by location (Figure 5). In Midville, yield showed a general upward trend over time, particularly in the later years. Attapulgus exhibited relatively high yields, though limited observations were available. Plains displayed substantial year-to-year variability with no clear long-term trend, while Tifton showed moderate fluctuations, including a notable decline around 2020 followed by recovery in subsequent years. 
@@ -151,14 +138,13 @@ Temporal patterns in yield varied by location (Figure 5). In Midville, yield sho
 #| label: fig-eda4
 #| fig-cap: "Yield across years by location."
 #| echo: FALSE
-knitr::include_graphics(here("results","figures","eda4.png"))
+knitr::include_graphics(here("results","figures","eda_p4.png"))
 ```
 
 
 
 @tbl-summarytable shows a summary of the data.
 
-Note the loading of the data providing a **relative** path using the `../../` notation. (Two dots means a folder up). You never want to specify an **absolute** path like `C:\ahandel\myproject\results\` because if you share this with someone, it won't work for them since they don't have that path. You can also use the `here` R package to create paths. See examples of that below. I generally recommend the `here` package.
 
 ```{r}
 #| label: tbl-summarytable
@@ -228,11 +214,6 @@ _What are the main take-home messages?_
 
 _Include citations in your Qmd file using BibTeX, the list of references will automatically be placed at the end_
 
-This paper [@leek2015] discusses types of analyses. 
-
-These papers [@mckay2020; @mckay2020a] are good examples of papers published using a fully reproducible setup similar to the one shown in this template. 
-
-Note that this cited reference will show up at the end of the document, the reference formatting is determined by the CSL file specified in the YAML header. Many more style files for almost any journal [are available](https://www.zotero.org/styles). You also specify the location of your BibTeX reference file in the YAML. You can call your reference file anything you like.
 
 
 {{< pagebreak >}}

@@ -14,7 +14,7 @@ library(here) #for data loading/saving
 data_location <- here::here("data","processed-data","processeddata.rds")
 
 #load data. 
-mydata <- readRDS(data_location)
+clean_data <- readRDS(data_location)
 
 
 ######################################
@@ -25,7 +25,7 @@ mydata <- readRDS(data_location)
 
 
 #### First model fit
-model_variety <- aov(peanut_yield ~ variety, data = df)
+model_variety <- aov(peanut_yield ~ variety, data = clean_data)
 summary(model_variety)
 
 # place results from fit into a data frame with the tidy function

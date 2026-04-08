@@ -1,22 +1,8 @@
 ---
-title: "An example exploratory analysis script"
-date: "2024-02-07"
+title: "Exploratory Analysis Script"
+date: "2024-04-08"
 output: html_document
 ---
-
-  
-  
-This Quarto file loads the cleaned data and does some exploring.
-
-This version has the code inside the Quarto file itself.
-
-Also note that while cleaning and exploring is split here, this is iterative. You saw that as part of the processing, we already had to explore the data somewhat to understand how to clean it. In general, as you explore, you'll find things that need cleaning. As you clean, you can explore more. Therefore, at times it might make more sense to combine the cleaning and exploring code parts into a single R or Quarto file. Or split things in any other logical way.
-
-As part of the exploratory analysis, you should produce plots or tables or other summary quantities for the most interesting/important quantities in your data. Depending on the total number of variables in your dataset, explore all or some of the others. Figures produced here might be histograms or density plots, correlation plots, etc. Tables might summarize your data.
-
-Start by exploring one variable at a time. Then continue by creating plots or tables of the outcome(s) of interest and the predictor/exposure/input variables you are most interested in. If your dataset is small, you can do that for all variables. 
-
-Plots produced here can be scatterplots, boxplots, violinplots, etc. Tables can be simple 2x2 tables or larger ones.
 
 # Setup
 
@@ -25,8 +11,6 @@ Plots produced here can be scatterplots, boxplots, violinplots, etc. Tables can 
 library(here) #for data loading/saving
 library(dplyr)
 library(ggplot2)
-library(skimr)
-
 ```
 
 Load the data.
@@ -35,78 +19,95 @@ Load the data.
 #Path to data. Note the use of the here() package and not absolute paths
 data_location <- here::here("data","processed-data","processeddata.rds")
 #load data
-df <- readRDS(data_location)
+data <- readRDS(data_location)
 ```
 
 # Data exploration through tables
 
 ```{r}
-summary_df <- df %>%
+summary_data <- data %>%
   summarise(
     n_variety = n_distinct(variety),
     n_location = n_distinct(location),
     n_year = n_distinct(year)
   )
-print(summary_df)
+print(summary_data)
 
 # save to file
 summarytable_file = here("results", "tables", "summarytable.rds")
-saveRDS(summary_df, file = summarytable_file)
+saveRDS(summary_data, file = summarytable_file)
 ```
 
 # Data exploration through figures
 
 ```{r}
 #checking the variables 
-table(df$variety)
-table(df$location)
-table(df$watered)
-hist(df$year)
-hist(df$peanut_yield)
+table(data$variety)
+table(data$location)
+table(data$watered)
+hist(data$year)
+hist(data$peanut_yield)
 
 #plotting yield by varieties, in ascending order
-p1 <- ggplot(df, aes(x = reorder(variety, peanut_yield, median, na.rm = TRUE),
+p1 <- ggplot(data, aes(x = reorder(variety, peanut_yield, median, na.rm = TRUE),
                y = peanut_yield)) +
   geom_boxplot() +
   theme_bw() +
+  labs(
+    x="Peanut Varieties",
+    y="Peanut Yield (lb/acre)"
+  )+
   theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1))
-
 plot(p1)
-eda1 = here("results", "figures","eda1.png")
-ggsave(filename = eda1, plot=p1) 
+eda_p1 = here("results", "figures","eda_p1.png")
+ggsave(filename = eda_p1, plot=p1) 
 
 #plotting yield by watered vs non-watered
 p2 <- ggplot(df, aes(x = watered, y = peanut_yield)) +
   geom_boxplot() +
-  labs(x = "Watered", y = "Peanut Yield (lb/acre)") +
+  scale_x_discrete(labels = c("FALSE" = "Non-Irrigated",
+                              "TRUE" = "Irrigated")) +
+  labs(x = "Irrigation", y = "Peanut Yield (lb/acre)") +
   theme_bw()
-
 plot(p2)
-eda2 = here("results", "figures","eda2.png")
-ggsave(filename = eda2, plot=p2) 
+
+eda_p2 = here("results", "figures","eda_p2.png")
+ggsave(filename = eda_p2, plot=p2) 
 
 #plotting yield by location
-p3 <- ggplot(df2, aes(x = location, y = peanut_yield)) +
+p3 <- ggplot(data, aes(x = location, y = peanut_yield)) +
   geom_boxplot(outlier.alpha = 0.2) +
   labs(x = "Location", y = "Peanut Yield (lb/acre)") +
   theme_bw()
-
 plot(p3)
-eda3 = here("results", "figures","eda3.png")
-ggsave(filename = eda3, plot=p3) 
+
+eda_p3 = here("results", "figures","eda_p3.png")
+ggsave(filename = eda_p3, plot=p3) 
 
 #plotting yield across years by location
-p4 <- df2 %>%
-  group_by(year, location) %>%
-  summarise(mean_yield = mean(peanut_yield, na.rm = TRUE),
-            .groups = "drop") %>%
-  ggplot(aes(x = year, y = mean_yield)) +
+# all years you want shown on the x-axis
+all_years <- 2013:2025
+
+# plotting yield across years by location
+p4_data <- data %>%
+  group_by(location, year) %>%
+  summarise(
+    mean_yield = mean(peanut_yield, na.rm = TRUE),
+    .groups = "drop"
+  ) %>%
+  complete(location, year = all_years)
+
+p4 <- ggplot(p4_data, aes(x = factor(year, levels = all_years),
+                          y = mean_yield,
+                          group = location)) +
   geom_line() +
   geom_point() +
   facet_wrap(~ location) +
-  theme_bw()
-
+  labs(x = "Year", y = "Mean Peanut Yield (lb/acre)") +
+  theme_bw() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
 plot(p4)
-eda4 = here("results", "figures","eda4.png")
-ggsave(filename = eda4, plot=p4) 
+
+eda_p4 = here("results", "figures","eda_p4.png")
+ggsave(filename = eda_p4, plot=p4) 
 ```

@@ -6,10 +6,10 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="author" content="Andreas Handel">
-<meta name="dcterms.date" content="2024-02-07">
+<meta name="author" content="Emil Joson">
+<meta name="dcterms.date" content="2026-04-08">
 
-<title>An example cleaning script</title>
+<title>Cleaning Script</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -84,7 +84,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">An example cleaning script</h1>
+<h1 class="title">Cleaning Script</h1>
 </div>
 
 
@@ -94,14 +94,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <div>
     <div class="quarto-title-meta-heading">Author</div>
     <div class="quarto-title-meta-contents">
-             <p>Andreas Handel </p>
+             <p>Emil Joson </p>
           </div>
   </div>
     
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">February 7, 2024</p>
+      <p class="date">April 8, 2026</p>
     </div>
   </div>
   
@@ -115,19 +115,16 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <section id="processing-script" class="level1">
 <h1>Processing script</h1>
-<p>This contains the same code and comments/information as <code>processingcode.R</code>.</p>
-<p>This just shows it as Quarto file, to give you an idea how to do it in a setup that combines code and text in a single file.</p>
-<p>See the other Quarto file for my currently preferred approach of pulling code from the R script into the Quarto file.</p>
 </section>
 <section id="setup" class="level1">
 <h1>Setup</h1>
+</section>
+<section id="package-loading" class="level1">
+<h1>Package loading</h1>
 <p>Load needed packages. make sure they are installed.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(readxl) <span class="co">#for loading Excel files</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr) <span class="co">#for data processing/cleaning</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stderr">
-<pre><code>Warning: package 'dplyr' was built under R version 4.2.3</code></pre>
-</div>
 <div class="cell-output cell-output-stderr">
 <pre><code>
 Attaching package: 'dplyr'</code></pre>
@@ -142,276 +139,650 @@ Attaching package: 'dplyr'</code></pre>
 
     intersect, setdiff, setequal, union</code></pre>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyr) <span class="co">#for data processing/cleaning</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyr) <span class="co">#for data processing/cleaning</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(skimr) <span class="co">#for nice visualization of data </span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(here) <span class="co">#to set paths</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stderr">
-<pre><code>Warning: package 'tidyr' was built under R version 4.2.3</code></pre>
+<pre><code>here() starts at C:/Users/saj12401/Documents/GitHub/JOSON-MADA-project</code></pre>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(skimr) <span class="co">#for nice visualization of data </span></span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(here) <span class="co">#to set paths</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stderr">
-<pre><code>here() starts at C:/Users/saj12401/OneDrive - University of Georgia/Documents/GitHub/JOSON-MADA-project</code></pre>
-</div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(stringr) <span class="co">#for string processing</span></span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(readr) <span class="co">#for data processing</span></span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2) <span class="co">#for visualization</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stderr">
-<pre><code>Warning: package 'ggplot2' was built under R version 4.2.3</code></pre>
-</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(stringr) <span class="co">#for string processing</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(readr) <span class="co">#for data processing</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2) <span class="co">#for visualization</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(gt) </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
 <section id="data-loading" class="level1">
 <h1>Data loading</h1>
-<p>Note that for functions that come from specific packages (instead of base R), I often specify both package and function like so: package::function() that’s not required one could just call the function specifying the package makes it clearer where the function “lives”, but it adds typing. You can do it either way.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># path to data</span></span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="co"># note the use of the here() package and not absolute paths</span></span>
-<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>data_location <span class="ot">&lt;-</span> here<span class="sc">::</span><span class="fu">here</span>(<span class="st">"data"</span>,<span class="st">"raw-data"</span>,<span class="st">"exampledata.xlsx"</span>)</span>
-<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>data_location1 <span class="ot">&lt;-</span> here<span class="sc">::</span><span class="fu">here</span>(<span class="st">"data"</span>,<span class="st">"raw-data"</span>,<span class="st">"peanuts.csv"</span>)</span>
-<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>rawdata <span class="ot">&lt;-</span> readxl<span class="sc">::</span><span class="fu">read_excel</span>(data_location)</span>
-<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>rawdata1 <span class="ot">&lt;-</span> <span class="fu">read.csv2</span>(data_location1, <span class="at">sep=</span><span class="st">","</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># path to data</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="co"># note the use of the here() package and not absolute paths</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>data_location <span class="ot">&lt;-</span> here<span class="sc">::</span><span class="fu">here</span>(<span class="st">"data"</span>,<span class="st">"raw-data"</span>,<span class="st">"peanuts.csv"</span>)</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>raw_data <span class="ot">&lt;-</span> <span class="fu">read.csv2</span>(data_location, <span class="at">sep=</span><span class="st">","</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
-<section id="check-data" class="level1">
-<h1>Check data</h1>
-<p>Several ways of looking at the data</p>
+<section id="data-checking" class="level1">
+<h1>Data checking</h1>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>dplyr<span class="sc">::</span><span class="fu">glimpse</span>(rawdata1)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(raw_data)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>Rows: 18,116
-Columns: 38
-$ treatment_key        &lt;chr&gt; "AU-NPL 17ø507PN22-119", "AU-NPL 17ø507PN22-217",…
-$ year                 &lt;int&gt; 2022, 2022, 2022, 2022, 2022, 2022, 2022, 2022, 2…
-$ location             &lt;chr&gt; "Midville", "Midville", "Midville", "Midville", "…
-$ test_id              &lt;chr&gt; "507PN", "507PN", "507PN", "507PN", "507PN", "507…
-$ experiment_name      &lt;chr&gt; "507PN22", "507PN22", "507PN22", "507PN22", "507P…
-$ watered              &lt;lgl&gt; TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, FALSE, FALSE,…
-$ planting_date        &lt;chr&gt; "", "", "", "", "", "", "", "", "", "", "", "", "…
-$ digging_date         &lt;chr&gt; "", "", "", "", "", "", "", "", "", "", "", "", "…
-$ test_entry           &lt;int&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, N…
-$ variety_key          &lt;int&gt; 1010, 1010, 1010, 1010, 1010, 1010, 1010, 1010, 1…
-$ variety              &lt;chr&gt; "AU-NPL 17", "AU-NPL 17", "AU-NPL 17", "AU-NPL 17…
-$ treatment            &lt;chr&gt; "", "", "", "", "", "", "", "", "", "", "", "", "…
-$ block                &lt;int&gt; 1, 2, 3, 4, 5, 6, 1, 2, 3, 4, 5, 6, 1, 2, 3, 4, 5…
-$ plot_number          &lt;int&gt; 119, 217, 319, 416, 529, 615, 119, 217, 319, 416,…
-$ plot_weight          &lt;chr&gt; "", "", "", "", "", "", "", "", "", "", "", "", "…
-$ total_seed_weight    &lt;chr&gt; "", "", "", "", "", "", "", "", "", "", "", "", "…
-$ total_seed_count     &lt;int&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, N…
-$ calc_seed_weight_200 &lt;chr&gt; "-9", "-9", "-9", "-9", "-9", "-9", "-9", "-9", "…
-$ seed_weight_200      &lt;chr&gt; "", "", "", "", "", "", "", "", "", "", "", "", "…
-$ seed_weight_100      &lt;chr&gt; "", "", "", "", "", "", "", "", "", "", "", "", "…
-$ seed_per_pound       &lt;chr&gt; "-9", "-9", "-9", "-9", "-9", "-9", "-9", "-9", "…
-$ peanut_yield         &lt;int&gt; -9, -9, -9, -9, -9, -9, -9, -9, -9, -9, -9, -9, -…
-$ moisture             &lt;int&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, N…
-$ tsmk                 &lt;int&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, N…
-$ ok                   &lt;int&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, N…
-$ dk                   &lt;int&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, N…
-$ elk                  &lt;int&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, N…
-$ fancy                &lt;int&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, N…
-$ maturity_code        &lt;int&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, N…
-$ maturity             &lt;chr&gt; "Unknown", "Unknown", "Unknown", "Unknown", "Unkn…
-$ market_type          &lt;chr&gt; "", "", "", "", "", "", "", "", "", "", "", "", "…
-$ plot_harvest_length  &lt;int&gt; 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 2…
-$ plot_harvest_width   &lt;int&gt; 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6…
-$ plots_per_acre       &lt;int&gt; 363, 363, 363, 363, 363, 363, 363, 363, 363, 363,…
-$ plot_row_number      &lt;int&gt; 2, 7, 2, 16, 19, 15, 2, 7, 2, 16, 19, 15, 4, 3, 2…
-$ plot_column_number   &lt;int&gt; 2, 5, 8, 8, 4, 2, 2, 5, 8, 8, 4, 2, 2, 7, 14, 12,…
-$ notes                &lt;chr&gt; "", "", "", "", "", "", "", "", "", "", "", "", "…
-$ plots                &lt;lgl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, N…</code></pre>
+<pre><code>'data.frame':   18116 obs. of  38 variables:
+ $ treatment_key       : chr  "AU-NPL 17ø507PN22-119" "AU-NPL 17ø507PN22-217" "AU-NPL 17ø507PN22-319" "AU-NPL 17ø507PN22-416" ...
+ $ year                : int  2022 2022 2022 2022 2022 2022 2022 2022 2022 2022 ...
+ $ location            : chr  "Midville" "Midville" "Midville" "Midville" ...
+ $ test_id             : chr  "507PN" "507PN" "507PN" "507PN" ...
+ $ experiment_name     : chr  "507PN22" "507PN22" "507PN22" "507PN22" ...
+ $ watered             : logi  TRUE TRUE TRUE TRUE TRUE TRUE ...
+ $ planting_date       : chr  "" "" "" "" ...
+ $ digging_date        : chr  "" "" "" "" ...
+ $ test_entry          : int  NA NA NA NA NA NA NA NA NA NA ...
+ $ variety_key         : int  1010 1010 1010 1010 1010 1010 1010 1010 1010 1010 ...
+ $ variety             : chr  "AU-NPL 17" "AU-NPL 17" "AU-NPL 17" "AU-NPL 17" ...
+ $ treatment           : chr  "" "" "" "" ...
+ $ block               : int  1 2 3 4 5 6 1 2 3 4 ...
+ $ plot_number         : int  119 217 319 416 529 615 119 217 319 416 ...
+ $ plot_weight         : chr  "" "" "" "" ...
+ $ total_seed_weight   : chr  "" "" "" "" ...
+ $ total_seed_count    : int  NA NA NA NA NA NA NA NA NA NA ...
+ $ calc_seed_weight_200: chr  "-9" "-9" "-9" "-9" ...
+ $ seed_weight_200     : chr  "" "" "" "" ...
+ $ seed_weight_100     : chr  "" "" "" "" ...
+ $ seed_per_pound      : chr  "-9" "-9" "-9" "-9" ...
+ $ peanut_yield        : int  -9 -9 -9 -9 -9 -9 -9 -9 -9 -9 ...
+ $ moisture            : int  NA NA NA NA NA NA NA NA NA NA ...
+ $ tsmk                : int  NA NA NA NA NA NA NA NA NA NA ...
+ $ ok                  : int  NA NA NA NA NA NA NA NA NA NA ...
+ $ dk                  : int  NA NA NA NA NA NA NA NA NA NA ...
+ $ elk                 : int  NA NA NA NA NA NA NA NA NA NA ...
+ $ fancy               : int  NA NA NA NA NA NA NA NA NA NA ...
+ $ maturity_code       : int  NA NA NA NA NA NA NA NA NA NA ...
+ $ maturity            : chr  "Unknown" "Unknown" "Unknown" "Unknown" ...
+ $ market_type         : chr  "" "" "" "" ...
+ $ plot_harvest_length : int  20 20 20 20 20 20 20 20 20 20 ...
+ $ plot_harvest_width  : int  6 6 6 6 6 6 6 6 6 6 ...
+ $ plots_per_acre      : int  363 363 363 363 363 363 363 363 363 363 ...
+ $ plot_row_number     : int  2 7 2 16 19 15 2 7 2 16 ...
+ $ plot_column_number  : int  2 5 8 8 4 2 2 5 8 8 ...
+ $ notes               : chr  "" "" "" "" ...
+ $ plots               : logi  NA NA NA NA NA NA ...</code></pre>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(rawdata1)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code> treatment_key           year        location           test_id         
- Length:18116       Min.   :2013   Length:18116       Length:18116      
- Class :character   1st Qu.:2016   Class :character   Class :character  
- Mode  :character   Median :2018   Mode  :character   Mode  :character  
-                    Mean   :2019                                        
-                    3rd Qu.:2022                                        
-                    Max.   :2025                                        
-                                                                        
- experiment_name     watered        planting_date      digging_date      
- Length:18116       Mode :logical   Length:18116       Length:18116      
- Class :character   FALSE:7884      Class :character   Class :character  
- Mode  :character   TRUE :10232     Mode  :character   Mode  :character  
-                                                                         
-                                                                         
-                                                                         
-                                                                         
-   test_entry     variety_key      variety           treatment        
- Min.   :  1.0   Min.   :1000    Length:18116       Length:18116      
- 1st Qu.: 83.0   1st Qu.:1029    Class :character   Class :character  
- Median :119.0   Median :1082    Mode  :character   Mode  :character  
- Mean   :144.2   Mean   :1261                                         
- 3rd Qu.:236.0   3rd Qu.:1110                                         
- Max.   :272.0   Max.   :9999                                         
- NA's   :3348    NA's   :16168                                        
-     block        plot_number    plot_weight        total_seed_weight 
- Min.   :1.000   Min.   :101.0   Length:18116       Length:18116      
- 1st Qu.:2.000   1st Qu.:227.0   Class :character   Class :character  
- Median :4.000   Median :420.0   Mode  :character   Mode  :character  
- Mean   :4.228   Mean   :437.8                                        
- 3rd Qu.:6.000   3rd Qu.:614.0                                        
- Max.   :8.000   Max.   :830.0                                        
-                                                                      
- total_seed_count calc_seed_weight_200 seed_weight_200    seed_weight_100   
- Min.   :  -9.0   Length:18116         Length:18116       Length:18116      
- 1st Qu.: 434.0   Class :character     Class :character   Class :character  
- Median : 681.0   Mode  :character     Mode  :character   Mode  :character  
- Mean   : 576.7                                                             
- 3rd Qu.: 794.0                                                             
- Max.   :1608.0                                                             
- NA's   :14305                                                              
- seed_per_pound      peanut_yield     moisture           tsmk      
- Length:18116       Min.   :  -9   Min.   : 7.000   Min.   :-9.00  
- Class :character   1st Qu.:  -9   1st Qu.: 7.000   1st Qu.:62.00  
- Mode  :character   Median :4260   Median : 7.000   Median :72.00  
-                    Mean   :3623   Mean   : 7.509   Mean   :55.35  
-                    3rd Qu.:5572   3rd Qu.: 7.000   3rd Qu.:75.00  
-                    Max.   :9171   Max.   :10.000   Max.   :82.00  
-                                   NA's   :11532    NA's   :13142  
-       ok               dk              elk             fancy       
- Min.   :-9.000   Min.   :-9.000   Min.   :-9.000   Min.   :-9.000  
- 1st Qu.: 1.000   1st Qu.: 0.000   1st Qu.:-9.000   1st Qu.:-9.000  
- Median : 3.000   Median : 0.000   Median : 0.000   Median :-9.000  
- Mean   : 0.832   Mean   :-1.081   Mean   : 4.166   Mean   : 6.308  
- 3rd Qu.: 4.000   3rd Qu.: 1.000   3rd Qu.: 0.000   3rd Qu.: 0.000  
- Max.   :21.000   Max.   :26.000   Max.   :72.000   Max.   :99.000  
- NA's   :13142    NA's   :13142    NA's   :13848    NA's   :15096   
- maturity_code     maturity         market_type        plot_harvest_length
- Min.   :1.000   Length:18116       Length:18116       Min.   :20         
- 1st Qu.:5.000   Class :character   Class :character   1st Qu.:20         
- Median :5.000   Mode  :character   Mode  :character   Median :20         
- Mean   :5.086                                         Mean   :20         
- 3rd Qu.:6.000                                         3rd Qu.:20         
- Max.   :7.000                                         Max.   :20         
- NA's   :3564                                                             
- plot_harvest_width plots_per_acre plot_row_number  plot_column_number
- Min.   :6          Min.   :363    Min.   : 1.000   Min.   : 1.000    
- 1st Qu.:6          1st Qu.:363    1st Qu.: 3.000   1st Qu.: 4.000    
- Median :6          Median :363    Median : 6.000   Median : 7.000    
- Mean   :6          Mean   :363    Mean   : 7.129   Mean   : 8.279    
- 3rd Qu.:6          3rd Qu.:363    3rd Qu.: 9.000   3rd Qu.:12.000    
- Max.   :6          Max.   :363    Max.   :20.000   Max.   :22.000    
-                                   NA's   :13472    NA's   :13472     
-    notes            plots        
- Length:18116       Mode:logical  
- Class :character   NA's:18116    
- Mode  :character                 
-                                  
-                                  
-                                  
-                                  </code></pre>
-</div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(rawdata1)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>          treatment_key year location test_id experiment_name watered
-1 AU-NPL 17ø507PN22-119 2022 Midville   507PN         507PN22    TRUE
-2 AU-NPL 17ø507PN22-217 2022 Midville   507PN         507PN22    TRUE
-3 AU-NPL 17ø507PN22-319 2022 Midville   507PN         507PN22    TRUE
-4 AU-NPL 17ø507PN22-416 2022 Midville   507PN         507PN22    TRUE
-5 AU-NPL 17ø507PN22-529 2022 Midville   507PN         507PN22    TRUE
-6 AU-NPL 17ø507PN22-615 2022 Midville   507PN         507PN22    TRUE
-  planting_date digging_date test_entry variety_key   variety treatment block
-1                                    NA        1010 AU-NPL 17               1
-2                                    NA        1010 AU-NPL 17               2
-3                                    NA        1010 AU-NPL 17               3
-4                                    NA        1010 AU-NPL 17               4
-5                                    NA        1010 AU-NPL 17               5
-6                                    NA        1010 AU-NPL 17               6
-  plot_number plot_weight total_seed_weight total_seed_count
-1         119                                             NA
-2         217                                             NA
-3         319                                             NA
-4         416                                             NA
-5         529                                             NA
-6         615                                             NA
-  calc_seed_weight_200 seed_weight_200 seed_weight_100 seed_per_pound
-1                   -9                                             -9
-2                   -9                                             -9
-3                   -9                                             -9
-4                   -9                                             -9
-5                   -9                                             -9
-6                   -9                                             -9
-  peanut_yield moisture tsmk ok dk elk fancy maturity_code maturity market_type
-1           -9       NA   NA NA NA  NA    NA            NA  Unknown            
-2           -9       NA   NA NA NA  NA    NA            NA  Unknown            
-3           -9       NA   NA NA NA  NA    NA            NA  Unknown            
-4           -9       NA   NA NA NA  NA    NA            NA  Unknown            
-5           -9       NA   NA NA NA  NA    NA            NA  Unknown            
-6           -9       NA   NA NA NA  NA    NA            NA  Unknown            
-  plot_harvest_length plot_harvest_width plots_per_acre plot_row_number
-1                  20                  6            363               2
-2                  20                  6            363               7
-3                  20                  6            363               2
-4                  20                  6            363              16
-5                  20                  6            363              19
-6                  20                  6            363              15
-  plot_column_number notes plots
-1                  2          NA
-2                  5          NA
-3                  8          NA
-4                  8          NA
-5                  4          NA
-6                  2          NA</code></pre>
-</div>
-</div>
-</section>
-<section id="cleaning" class="level1">
-<h1>Cleaning</h1>
-<p>By inspecting the data as done above, we find some problems that need addressing:</p>
-<p>First, there is an entry for height which says “sixty” instead of a number. Does that mean it should be a numeric 60? It somehow doesn’t make sense since the weight is 60kg, which can’t happen for a 60cm person (a baby). Since we don’t know how to fix this, we might decide to remove the person. This “sixty” entry also turned all Height entries into characters instead of numeric. That conversion to character also means that our summary function isn’t very meaningful. So let’s fix that first.</p>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>d1 <span class="ot">&lt;-</span> rawdata <span class="sc">%&gt;%</span> dplyr<span class="sc">::</span><span class="fu">filter</span>( Height <span class="sc">!=</span> <span class="st">"sixty"</span> ) <span class="sc">%&gt;%</span> </span>
-<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>                  dplyr<span class="sc">::</span><span class="fu">mutate</span>(<span class="at">Height =</span> <span class="fu">as.numeric</span>(Height))</span>
-<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(d1<span class="sc">$</span>Height)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">skim</span>(raw_data)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="processingfile-v1_files/figure-html/unnamed-chunk-4-1.png" class="img-fluid figure-img" width="672"></p>
-</figure>
+<table class="caption-top table table-sm table-striped small">
+<caption>Data summary</caption>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Name</td>
+<td style="text-align: left;">raw_data</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Number of rows</td>
+<td style="text-align: left;">18116</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Number of columns</td>
+<td style="text-align: left;">38</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">_______________________</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Column type frequency:</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">character</td>
+<td style="text-align: left;">17</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">logical</td>
+<td style="text-align: left;">2</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">numeric</td>
+<td style="text-align: left;">19</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">________________________</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Group variables</td>
+<td style="text-align: left;">None</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Variable type: character</strong></p>
+<table class="caption-top table table-sm table-striped small">
+<colgroup>
+<col style="width: 26%">
+<col style="width: 12%">
+<col style="width: 17%">
+<col style="width: 5%">
+<col style="width: 5%">
+<col style="width: 7%">
+<col style="width: 11%">
+<col style="width: 13%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">skim_variable</th>
+<th style="text-align: right;">n_missing</th>
+<th style="text-align: right;">complete_rate</th>
+<th style="text-align: right;">min</th>
+<th style="text-align: right;">max</th>
+<th style="text-align: right;">empty</th>
+<th style="text-align: right;">n_unique</th>
+<th style="text-align: right;">whitespace</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">treatment_key</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">15</td>
+<td style="text-align: right;">29</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">16388</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">location</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">10</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">test_id</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">experiment_name</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">7</td>
+<td style="text-align: right;">7</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">86</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">planting_date</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">9</td>
+<td style="text-align: right;">15848</td>
+<td style="text-align: right;">10</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">digging_date</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">10</td>
+<td style="text-align: right;">5352</td>
+<td style="text-align: right;">115</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">variety</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">17</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">140</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">treatment</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">9</td>
+<td style="text-align: right;">17990</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">plot_weight</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">11</td>
+<td style="text-align: right;">4693</td>
+<td style="text-align: right;">2904</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">total_seed_weight</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">16838</td>
+<td style="text-align: right;">341</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">calc_seed_weight_200</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">11</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">355</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">seed_weight_200</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">16838</td>
+<td style="text-align: right;">24</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">seed_weight_100</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">13527</td>
+<td style="text-align: right;">1081</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">seed_per_pound</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">11</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1417</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">maturity</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">7</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">7</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">market_type</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: right;">1188</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">notes</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">31</td>
+<td style="text-align: right;">18104</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">0</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Variable type: logical</strong></p>
+<table class="caption-top table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th style="text-align: left;">skim_variable</th>
+<th style="text-align: right;">n_missing</th>
+<th style="text-align: right;">complete_rate</th>
+<th style="text-align: right;">mean</th>
+<th style="text-align: left;">count</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">watered</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">0.56</td>
+<td style="text-align: left;">TRU: 10232, FAL: 7884</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">plots</td>
+<td style="text-align: right;">18116</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">NaN</td>
+<td style="text-align: left;">:</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Variable type: numeric</strong></p>
+<table class="caption-top table table-sm table-striped small">
+<colgroup>
+<col style="width: 21%">
+<col style="width: 10%">
+<col style="width: 15%">
+<col style="width: 8%">
+<col style="width: 8%">
+<col style="width: 5%">
+<col style="width: 5%">
+<col style="width: 5%">
+<col style="width: 5%">
+<col style="width: 5%">
+<col style="width: 6%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">skim_variable</th>
+<th style="text-align: right;">n_missing</th>
+<th style="text-align: right;">complete_rate</th>
+<th style="text-align: right;">mean</th>
+<th style="text-align: right;">sd</th>
+<th style="text-align: right;">p0</th>
+<th style="text-align: right;">p25</th>
+<th style="text-align: right;">p50</th>
+<th style="text-align: right;">p75</th>
+<th style="text-align: right;">p100</th>
+<th style="text-align: left;">hist</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">year</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">2018.75</td>
+<td style="text-align: right;">3.52</td>
+<td style="text-align: right;">2013</td>
+<td style="text-align: right;">2016</td>
+<td style="text-align: right;">2018</td>
+<td style="text-align: right;">2022</td>
+<td style="text-align: right;">2025</td>
+<td style="text-align: left;">▆▅▇▅▆</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">test_entry</td>
+<td style="text-align: right;">3348</td>
+<td style="text-align: right;">0.82</td>
+<td style="text-align: right;">144.24</td>
+<td style="text-align: right;">86.77</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">83</td>
+<td style="text-align: right;">119</td>
+<td style="text-align: right;">236</td>
+<td style="text-align: right;">272</td>
+<td style="text-align: left;">▃▅▅▁▇</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">variety_key</td>
+<td style="text-align: right;">16168</td>
+<td style="text-align: right;">0.11</td>
+<td style="text-align: right;">1260.53</td>
+<td style="text-align: right;">879.62</td>
+<td style="text-align: right;">1000</td>
+<td style="text-align: right;">1029</td>
+<td style="text-align: right;">1082</td>
+<td style="text-align: right;">1110</td>
+<td style="text-align: right;">9999</td>
+<td style="text-align: left;">▇▁▁▁▁</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">block</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">4.23</td>
+<td style="text-align: right;">2.17</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: left;">▇▅▇▅▅</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">plot_number</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">437.83</td>
+<td style="text-align: right;">217.37</td>
+<td style="text-align: right;">101</td>
+<td style="text-align: right;">227</td>
+<td style="text-align: right;">420</td>
+<td style="text-align: right;">614</td>
+<td style="text-align: right;">830</td>
+<td style="text-align: left;">▇▅▇▅▅</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">total_seed_count</td>
+<td style="text-align: right;">14305</td>
+<td style="text-align: right;">0.21</td>
+<td style="text-align: right;">576.75</td>
+<td style="text-align: right;">368.16</td>
+<td style="text-align: right;">-9</td>
+<td style="text-align: right;">434</td>
+<td style="text-align: right;">681</td>
+<td style="text-align: right;">794</td>
+<td style="text-align: right;">1608</td>
+<td style="text-align: left;">▃▂▇▁▁</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">peanut_yield</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">3622.94</td>
+<td style="text-align: right;">2466.32</td>
+<td style="text-align: right;">-9</td>
+<td style="text-align: right;">-9</td>
+<td style="text-align: right;">4260</td>
+<td style="text-align: right;">5572</td>
+<td style="text-align: right;">9171</td>
+<td style="text-align: left;">▆▃▇▆▁</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">moisture</td>
+<td style="text-align: right;">11532</td>
+<td style="text-align: right;">0.36</td>
+<td style="text-align: right;">7.51</td>
+<td style="text-align: right;">1.13</td>
+<td style="text-align: right;">7</td>
+<td style="text-align: right;">7</td>
+<td style="text-align: right;">7</td>
+<td style="text-align: right;">7</td>
+<td style="text-align: right;">10</td>
+<td style="text-align: left;">▇▁▁▁▂</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">tsmk</td>
+<td style="text-align: right;">13142</td>
+<td style="text-align: right;">0.27</td>
+<td style="text-align: right;">55.35</td>
+<td style="text-align: right;">33.25</td>
+<td style="text-align: right;">-9</td>
+<td style="text-align: right;">62</td>
+<td style="text-align: right;">72</td>
+<td style="text-align: right;">75</td>
+<td style="text-align: right;">82</td>
+<td style="text-align: left;">▂▁▁▁▇</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ok</td>
+<td style="text-align: right;">13142</td>
+<td style="text-align: right;">0.27</td>
+<td style="text-align: right;">0.83</td>
+<td style="text-align: right;">5.36</td>
+<td style="text-align: right;">-9</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">21</td>
+<td style="text-align: left;">▃▇▃▁▁</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">dk</td>
+<td style="text-align: right;">13142</td>
+<td style="text-align: right;">0.27</td>
+<td style="text-align: right;">-1.08</td>
+<td style="text-align: right;">4.20</td>
+<td style="text-align: right;">-9</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">26</td>
+<td style="text-align: left;">▂▇▁▁▁</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">elk</td>
+<td style="text-align: right;">13848</td>
+<td style="text-align: right;">0.24</td>
+<td style="text-align: right;">4.17</td>
+<td style="text-align: right;">18.65</td>
+<td style="text-align: right;">-9</td>
+<td style="text-align: right;">-9</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">72</td>
+<td style="text-align: left;">▇▁▁▁▁</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">fancy</td>
+<td style="text-align: right;">15096</td>
+<td style="text-align: right;">0.17</td>
+<td style="text-align: right;">6.31</td>
+<td style="text-align: right;">29.59</td>
+<td style="text-align: right;">-9</td>
+<td style="text-align: right;">-9</td>
+<td style="text-align: right;">-9</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">99</td>
+<td style="text-align: left;">▇▁▁▁▁</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">maturity_code</td>
+<td style="text-align: right;">3564</td>
+<td style="text-align: right;">0.80</td>
+<td style="text-align: right;">5.09</td>
+<td style="text-align: right;">1.40</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">7</td>
+<td style="text-align: left;">▁▁▂▇▇</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">plot_harvest_length</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">20.00</td>
+<td style="text-align: right;">0.00</td>
+<td style="text-align: right;">20</td>
+<td style="text-align: right;">20</td>
+<td style="text-align: right;">20</td>
+<td style="text-align: right;">20</td>
+<td style="text-align: right;">20</td>
+<td style="text-align: left;">▁▁▇▁▁</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">plot_harvest_width</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">6.00</td>
+<td style="text-align: right;">0.00</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: left;">▁▁▇▁▁</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">plots_per_acre</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">363.00</td>
+<td style="text-align: right;">0.00</td>
+<td style="text-align: right;">363</td>
+<td style="text-align: right;">363</td>
+<td style="text-align: right;">363</td>
+<td style="text-align: right;">363</td>
+<td style="text-align: right;">363</td>
+<td style="text-align: left;">▁▁▇▁▁</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">plot_row_number</td>
+<td style="text-align: right;">13472</td>
+<td style="text-align: right;">0.26</td>
+<td style="text-align: right;">7.13</td>
+<td style="text-align: right;">4.75</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">9</td>
+<td style="text-align: right;">20</td>
+<td style="text-align: left;">▇▇▃▂▂</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">plot_column_number</td>
+<td style="text-align: right;">13472</td>
+<td style="text-align: right;">0.26</td>
+<td style="text-align: right;">8.28</td>
+<td style="text-align: right;">5.58</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">7</td>
+<td style="text-align: right;">12</td>
+<td style="text-align: right;">22</td>
+<td style="text-align: left;">▇▆▂▂▂</td>
+</tr>
+</tbody>
+</table>
 </div>
 </div>
-</div>
-<p>Now we see that there is one person with a height of 6. That could be a typo, or someone mistakenly entered their height in feet. We assume that we know it was a mistaken entry as feet and convert to centimeters. Depending on your knowledge of the data, you might instead want to remove this person.</p>
+</section>
+<section id="data-cleaning" class="level1">
+<h1>Data cleaning</h1>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>d2 <span class="ot">&lt;-</span> d1 <span class="sc">%&gt;%</span> dplyr<span class="sc">::</span><span class="fu">mutate</span>( <span class="at">Height =</span> <span class="fu">replace</span>(Height, Height<span class="sc">==</span><span class="st">"6"</span>,<span class="fu">round</span>(<span class="dv">6</span><span class="sc">*</span><span class="fl">30.48</span>,<span class="dv">0</span>)) )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
-<p>Height values seem ok now.</p>
-<p>Now let’s look at the <code>Weight</code> variable. There is a person with weight of 7000, which is impossible, and one person with missing weight. To be able to analyze the data, we’ll remove those individuals as well.</p>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>d3 <span class="ot">&lt;-</span> d2 <span class="sc">%&gt;%</span>  dplyr<span class="sc">::</span><span class="fu">filter</span>(Weight <span class="sc">!=</span> <span class="dv">7000</span>) <span class="sc">%&gt;%</span> tidyr<span class="sc">::</span><span class="fu">drop_na</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
-<p>Now checking the <code>Gender</code> variable. Gender should be a categorical/factor variable but is loaded as character. We can fix that with simple base R code to mix things up.</p>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>d3<span class="sc">$</span>Gender <span class="ot">&lt;-</span> <span class="fu">as.factor</span>(d3<span class="sc">$</span>Gender)  </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
-<p>Now we see that there is another NA, but it’s not <code>NA</code> from R, instead it was loaded as character and is now considered as a category. We’ll proceed here by removing that individual with that NA entry. Since this keeps an empty category for Gender, I’m also using droplevels() to get rid of it.</p>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>d4 <span class="ot">&lt;-</span> d3 <span class="sc">%&gt;%</span> dplyr<span class="sc">::</span><span class="fu">filter</span>( <span class="sc">!</span>(Gender <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"NA"</span>,<span class="st">"N"</span>)) ) <span class="sc">%&gt;%</span> <span class="fu">droplevels</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
-<p>All done, data is clean now.</p>
-<p>Let’s assign at the end to some final variable, this makes it easier to add further cleaning steps above.</p>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="co">#these are columns that should be numeric based on their names and data, but are currently classified as characters</span></span>
-<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>num_cols <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"plot_weight"</span>,<span class="st">"total_seed_weight"</span>,<span class="st">"calc_seed_weight_200"</span>,</span>
-<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>              <span class="st">"seed_weight_200"</span>,<span class="st">"seed_weight_100"</span>,<span class="st">"seed_per_pound"</span>)</span>
-<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a><span class="co">#convert "num stored as chr" columns into numeric</span></span>
-<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a>rawdata1 <span class="ot">&lt;-</span> rawdata1 <span class="sc">%&gt;%</span></span>
-<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">all_of</span>(num_cols), parse_number)) </span>
-<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a>rawdata1 <span class="ot">&lt;-</span> rawdata1 <span class="sc">%&gt;%</span></span>
-<span id="cb24-10"><a href="#cb24-10" aria-hidden="true" tabindex="-1"></a>  <span class="co"># optional but helpful: trim whitespace so "   " becomes ""</span></span>
-<span id="cb24-11"><a href="#cb24-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">where</span>(is.character), str_squish)) <span class="sc">%&gt;%</span></span>
-<span id="cb24-12"><a href="#cb24-12" aria-hidden="true" tabindex="-1"></a>  <span class="co"># turn empty strings into NA</span></span>
-<span id="cb24-13"><a href="#cb24-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">where</span>(is.character), <span class="sc">~</span> <span class="fu">na_if</span>(.x, <span class="st">""</span>))) <span class="sc">%&gt;%</span></span>
-<span id="cb24-14"><a href="#cb24-14" aria-hidden="true" tabindex="-1"></a>  <span class="co"># turn "-9" strings into NA (only affects character columns)</span></span>
-<span id="cb24-15"><a href="#cb24-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">where</span>(is.character), <span class="sc">~</span> <span class="fu">na_if</span>(.x, <span class="st">"-9"</span>))) <span class="sc">%&gt;%</span></span>
-<span id="cb24-16"><a href="#cb24-16" aria-hidden="true" tabindex="-1"></a>  <span class="co"># turn -9 numeric sentinel into NA (only affects numeric/integer columns)</span></span>
-<span id="cb24-17"><a href="#cb24-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">where</span>(is.numeric), <span class="sc">~</span> <span class="fu">na_if</span>(.x, <span class="sc">-</span><span class="dv">9</span>)))</span>
-<span id="cb24-18"><a href="#cb24-18" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-19"><a href="#cb24-19" aria-hidden="true" tabindex="-1"></a><span class="co">#check missing data</span></span>
-<span id="cb24-20"><a href="#cb24-20" aria-hidden="true" tabindex="-1"></a><span class="fu">colSums</span>(<span class="fu">is.na</span>(rawdata1))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co">#these are columns that should be numeric based on their names and data, but are currently classified as characters</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>num_cols <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"plot_weight"</span>,<span class="st">"total_seed_weight"</span>,<span class="st">"calc_seed_weight_200"</span>,</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>              <span class="st">"seed_weight_200"</span>,<span class="st">"seed_weight_100"</span>,<span class="st">"seed_per_pound"</span>)</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a><span class="co">#convert "num stored as chr" columns into numeric</span></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>raw_data <span class="ot">&lt;-</span> raw_data <span class="sc">%&gt;%</span></span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">all_of</span>(num_cols), parse_number)) </span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>raw_data <span class="ot">&lt;-</span> raw_data <span class="sc">%&gt;%</span></span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>  <span class="co"># optional but helpful: trim whitespace so "   " becomes ""</span></span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">where</span>(is.character), str_squish)) <span class="sc">%&gt;%</span></span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a>  <span class="co"># turn empty strings into NA</span></span>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">where</span>(is.character), <span class="sc">~</span> <span class="fu">na_if</span>(.x, <span class="st">""</span>))) <span class="sc">%&gt;%</span></span>
+<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a>  <span class="co"># turn "-9" strings into NA (only affects character columns)</span></span>
+<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">where</span>(is.character), <span class="sc">~</span> <span class="fu">na_if</span>(.x, <span class="st">"-9"</span>))) <span class="sc">%&gt;%</span></span>
+<span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a>  <span class="co"># turn -9 numeric sentinel into NA (only affects numeric/integer columns)</span></span>
+<span id="cb12-17"><a href="#cb12-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">where</span>(is.numeric), <span class="sc">~</span> <span class="fu">na_if</span>(.x, <span class="sc">-</span><span class="dv">9</span>)))</span>
+<span id="cb12-18"><a href="#cb12-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-19"><a href="#cb12-19" aria-hidden="true" tabindex="-1"></a><span class="co">#check missing data</span></span>
+<span id="cb12-20"><a href="#cb12-20" aria-hidden="true" tabindex="-1"></a><span class="fu">colSums</span>(<span class="fu">is.na</span>(raw_data))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>       treatment_key                 year             location 
                    0                    0                    0 
@@ -440,53 +811,57 @@ $ plots                &lt;lgl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, N
                notes                plots 
                18104                18116 </code></pre>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="co">#subset only variables needed</span></span>
-<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> rawdata1 <span class="sc">%&gt;%</span></span>
-<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(year, location, watered, variety, peanut_yield, market_type)</span>
-<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a><span class="co">#making a key for the variety names to be kept confidential</span></span>
-<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a>variety_key <span class="ot">&lt;-</span> df <span class="sc">%&gt;%</span></span>
-<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">distinct</span>(variety) <span class="sc">%&gt;%</span>              <span class="co"># get unique varieties</span></span>
-<span id="cb26-8"><a href="#cb26-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(variety) <span class="sc">%&gt;%</span>               <span class="co"># optional: keeps numbering consistent</span></span>
-<span id="cb26-9"><a href="#cb26-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">variety_id =</span> <span class="fu">sprintf</span>(<span class="st">"%03d"</span>, <span class="fu">row_number</span>()))</span>
-<span id="cb26-10"><a href="#cb26-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-11"><a href="#cb26-11" aria-hidden="true" tabindex="-1"></a><span class="co">#converting variety names with variety numbers</span></span>
-<span id="cb26-12"><a href="#cb26-12" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> df <span class="sc">%&gt;%</span></span>
-<span id="cb26-13"><a href="#cb26-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(variety_key, <span class="at">by =</span> <span class="st">"variety"</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb26-14"><a href="#cb26-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>variety) <span class="sc">%&gt;%</span></span>
-<span id="cb26-15"><a href="#cb26-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">variety =</span> variety_id)</span>
-<span id="cb26-16"><a href="#cb26-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-17"><a href="#cb26-17" aria-hidden="true" tabindex="-1"></a><span class="co">#checking final dataframe</span></span>
-<span id="cb26-18"><a href="#cb26-18" aria-hidden="true" tabindex="-1"></a>df <span class="sc">%&gt;%</span></span>
-<span id="cb26-19"><a href="#cb26-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
-<span id="cb26-20"><a href="#cb26-20" aria-hidden="true" tabindex="-1"></a>    <span class="at">n_variety =</span> <span class="fu">n_distinct</span>(variety),</span>
-<span id="cb26-21"><a href="#cb26-21" aria-hidden="true" tabindex="-1"></a>    <span class="at">n_market_type =</span> <span class="fu">n_distinct</span>(market_type),</span>
-<span id="cb26-22"><a href="#cb26-22" aria-hidden="true" tabindex="-1"></a>    <span class="at">n_location =</span> <span class="fu">n_distinct</span>(location),</span>
-<span id="cb26-23"><a href="#cb26-23" aria-hidden="true" tabindex="-1"></a>    <span class="at">n_year =</span> <span class="fu">n_distinct</span>(year)</span>
-<span id="cb26-24"><a href="#cb26-24" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co">#subset only variables needed</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>clean_data <span class="ot">&lt;-</span> raw_data <span class="sc">%&gt;%</span></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(year, location, watered, variety, peanut_yield)</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a><span class="co">#making a key for the variety names to be kept confidential</span></span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>variety_key <span class="ot">&lt;-</span> clean_data <span class="sc">%&gt;%</span></span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">distinct</span>(variety) <span class="sc">%&gt;%</span>              <span class="co"># get unique varieties</span></span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(variety) <span class="sc">%&gt;%</span>               <span class="co"># optional: keeps numbering consistent</span></span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">variety_id =</span> <span class="fu">sprintf</span>(<span class="st">"%03d"</span>, <span class="fu">row_number</span>()))</span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a><span class="co">#converting variety names with variety numbers</span></span>
+<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a>clean_data <span class="ot">&lt;-</span> clean_data <span class="sc">%&gt;%</span></span>
+<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(variety_key, <span class="at">by =</span> <span class="st">"variety"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>variety) <span class="sc">%&gt;%</span></span>
+<span id="cb14-15"><a href="#cb14-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">variety =</span> variety_id)</span>
+<span id="cb14-16"><a href="#cb14-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-17"><a href="#cb14-17" aria-hidden="true" tabindex="-1"></a><span class="co">#only keeping entries that are present in all locations</span></span>
+<span id="cb14-18"><a href="#cb14-18" aria-hidden="true" tabindex="-1"></a>variety_locations <span class="ot">&lt;-</span> clean_data <span class="sc">%&gt;%</span></span>
+<span id="cb14-19"><a href="#cb14-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(variety) <span class="sc">%&gt;%</span></span>
+<span id="cb14-20"><a href="#cb14-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">n_locations =</span> <span class="fu">n_distinct</span>(location))</span>
+<span id="cb14-21"><a href="#cb14-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-22"><a href="#cb14-22" aria-hidden="true" tabindex="-1"></a>valid_varieties <span class="ot">&lt;-</span> variety_locations <span class="sc">%&gt;%</span></span>
+<span id="cb14-23"><a href="#cb14-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(n_locations <span class="sc">==</span> <span class="dv">4</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb14-24"><a href="#cb14-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pull</span>(variety)</span>
+<span id="cb14-25"><a href="#cb14-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-26"><a href="#cb14-26" aria-hidden="true" tabindex="-1"></a>clean_data <span class="ot">&lt;-</span> clean_data <span class="sc">%&gt;%</span></span>
+<span id="cb14-27"><a href="#cb14-27" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(variety <span class="sc">%in%</span> valid_varieties)</span>
+<span id="cb14-28"><a href="#cb14-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-29"><a href="#cb14-29" aria-hidden="true" tabindex="-1"></a><span class="co">#remove rows with missing yield</span></span>
+<span id="cb14-30"><a href="#cb14-30" aria-hidden="true" tabindex="-1"></a>clean_data <span class="ot">&lt;-</span> clean_data <span class="sc">%&gt;%</span> </span>
+<span id="cb14-31"><a href="#cb14-31" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(peanut_yield))</span>
+<span id="cb14-32"><a href="#cb14-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-33"><a href="#cb14-33" aria-hidden="true" tabindex="-1"></a><span class="co">#checking final dataframe</span></span>
+<span id="cb14-34"><a href="#cb14-34" aria-hidden="true" tabindex="-1"></a>clean_data <span class="sc">%&gt;%</span></span>
+<span id="cb14-35"><a href="#cb14-35" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb14-36"><a href="#cb14-36" aria-hidden="true" tabindex="-1"></a>    <span class="at">n_variety =</span> <span class="fu">n_distinct</span>(variety),</span>
+<span id="cb14-37"><a href="#cb14-37" aria-hidden="true" tabindex="-1"></a>    <span class="at">n_location =</span> <span class="fu">n_distinct</span>(location),</span>
+<span id="cb14-38"><a href="#cb14-38" aria-hidden="true" tabindex="-1"></a>    <span class="at">n_year =</span> <span class="fu">n_distinct</span>(year)</span>
+<span id="cb14-39"><a href="#cb14-39" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>  n_variety n_market_type n_location n_year
-1       140             6          4     13</code></pre>
+<pre><code>  n_variety n_location n_year
+1        34          4     12</code></pre>
 </div>
-</div>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>processeddata1 <span class="ot">&lt;-</span> df</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
 <section id="save-data" class="level1">
 <h1>Save data</h1>
-<p>Finally, we save the clean data as RDS file. I suggest you save your processed and cleaned data as RDS or RDA/Rdata files. This preserves coding like factors, characters, numeric, etc. If you save as CSV, that information would get lost. However, CSV is better for sharing with others since it’s plain text. If you do CSV, you might want to write down somewhere what each variable is.</p>
-<p>See here for some suggestions on how to store your processed data: http://www.sthda.com/english/wiki/saving-data-into-r-data-format-rds-and-rdata</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="co">#save_data_location &lt;- here::here("data","processed-data","processeddata.rds")</span></span>
-<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>save_data_location1 <span class="ot">&lt;-</span> here<span class="sc">::</span><span class="fu">here</span>(<span class="st">"data"</span>,<span class="st">"processed-data"</span>,<span class="st">"processeddata1.rds"</span>)</span>
-<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a><span class="co">#saveRDS(processeddata, file = save_data_location)</span></span>
-<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a><span class="fu">saveRDS</span>(processeddata1, <span class="at">file =</span> save_data_location1)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>save_data_location <span class="ot">&lt;-</span> here<span class="sc">::</span><span class="fu">here</span>(<span class="st">"data"</span>,<span class="st">"processed-data"</span>,<span class="st">"processeddata.rds"</span>)</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="fu">saveRDS</span>(clean_data, <span class="at">file =</span> save_data_location)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-</section>
-<section id="notes" class="level1">
-<h1>Notes</h1>
-<p>Removing anyone who had “faulty” or missing data is one approach. It’s often not the best. based on your question and your analysis approach, you might want to do cleaning differently (e.g.&nbsp;keep individuals with some missing information).</p>
 </section>
 
 </main>

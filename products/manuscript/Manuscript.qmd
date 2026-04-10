@@ -191,9 +191,25 @@ knitr::kable(resulttable4)
 
 ## Full analysis
 
-_Use one or several suitable statistical/machine learning methods to analyze your data and to produce meaningful figures, tables, etc. This might again be code that is best placed in one or several separate R scripts that need to be well documented. You want the code to produce figures and data ready for display as tables, and save those. Then you load them here._
+To explore patterns in peanut variety performance, an unsupervised machine learning approach was applied using k-means clustering. Prior to clustering, yield data were summarized at the variety level to capture key performance characteristics, including average yield, yield variability (standard deviation), and responsiveness to irrigation (difference between irrigated and non-irrigated yield). These features were selected to represent productivity, stability, and environmental responsiveness, which are important traits in agricultural systems.
 
-Example @tbl-resulttable2 shows a summary of a linear model fit.
+Because these variables were measured on different scales, all features were standardized prior to analysis. The optimal number of clusters was determined using the elbow method, which evaluates within-cluster sum of squares (WSS) across different values of k. A noticeable reduction in WSS was observed up to k = 4, after which improvements diminished, and thus three clusters were selected.
+
+```{r}
+#| label: fig-elbow_plot
+#| fig-cap: "Determination of the optimal number of clusters using the elbow method. The within-cluster sum of squares (WSS) is plotted against the number of clusters (k)."
+#| echo: FALSE
+knitr::include_graphics(here("results","figures","elbow.png"))
+```
+
+Principal component analysis (PCA) was used to visualize the clustering results in reduced dimensional space. The first two principal components explained a substantial proportion of the variation in the data, allowing clear separation of the identified clusters. These clusters corresponded to biologically meaningful groupings of peanut varieties, including high-yielding but variable varieties with strong irrigation response, more stable varieties with lower responsiveness, and intermediate-performing varieties. This suggests that clustering effectively captured key differences in yield performance and stability among varieties.
+
+```{r}
+#| label: fig-pca_plot
+#| fig-cap: "Principal component analysis (PCA) of peanut varieties based on yield-related traits. Varieties are grouped using k-means clustering (k = 3), with each point representing a variety."
+#| echo: FALSE
+knitr::include_graphics(here("results","figures","pca.png"))
+```
 
 
 

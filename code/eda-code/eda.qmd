@@ -10,7 +10,7 @@ output: html_document
 #load needed packages. make sure they are installed.
 library(here) #for data loading/saving
 library(dplyr)
-library(ggplot2)
+library(tidyverse)
 ```
 
 Load the data.
@@ -63,7 +63,7 @@ eda_p1 = here("results", "figures","eda_p1.png")
 ggsave(filename = eda_p1, plot=p1) 
 
 #plotting yield by watered vs non-watered
-p2 <- ggplot(df, aes(x = watered, y = peanut_yield)) +
+p2 <- ggplot(data, aes(x = watered, y = peanut_yield)) +
   geom_boxplot() +
   scale_x_discrete(labels = c("FALSE" = "Non-Irrigated",
                               "TRUE" = "Irrigated")) +
